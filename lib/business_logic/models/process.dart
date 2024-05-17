@@ -10,7 +10,7 @@ class Process {
       this.priority);
 
   factory Process.fromMap(MapEntry<String, dynamic> map) {
-    return Process(map.key, map.value[0], map.value[1], map.value[2],
-        map.value[3], map.value[4]);
+    return Process(map.key.toLowerCase(), map.value[0], map.value[1],
+        map.value[2], map.value[3], map.value[4]);
   }
 }

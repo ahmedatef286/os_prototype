@@ -4,8 +4,7 @@ import 'package:os_prototype/my_app.dart';
 
 Future<void> main() async {
   await FlythonServices.initialize();
-
   runApp(
-    MyApp(),
+    const MyApp(),
   );
 }

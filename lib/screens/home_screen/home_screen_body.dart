@@ -54,8 +54,8 @@ class _ProcessManagerBodyState extends State<ProcessManagerBody>
       if (searchKey != null) {
         procesesList = tempProcesesList
             .where((element) =>
-                element.name.contains(searchKey!) ||
-                "${element.pid}".contains(searchKey!))
+                element.name.contains(searchKey!.toLowerCase()) ||
+                "${element.pid}".contains(searchKey!.toLowerCase()))
             .toList();
       } else {
         procesesList = tempProcesesList;
