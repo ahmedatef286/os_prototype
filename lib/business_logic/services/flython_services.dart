@@ -6,7 +6,7 @@ class FlythonServices {
 
   static Future<void> initialize() async {
     pyapp = Flython();
-    await pyapp!.initialize("python", 'main.py', false);
+    await pyapp!.initialize("python3", 'main.py', false);
   }
 
   static Future<List<Process>> listAllProcesses() async {
