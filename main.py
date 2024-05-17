@@ -86,7 +86,49 @@ def get_system_resource_utilization_for_each_process():
         'processes': processes_info,
     }
 
+def terminate_process_tree_by_name(process_name):
+    terminated_pids = []
+    for proc in psutil.process_iter(['pid', 'name']):
+        if proc.info['name'] == process_name:
+            terminated, message = terminate_process_tree(proc.info['pid'])
+            if terminated:
+                terminated_pids.append(proc.info['pid'])
+            else:
+                return False, message
+    if terminated_pids:
+        return True, f"Process tree(s) with name '{process_name}' terminated successfully. PIDs: {terminated_pids}"
+    else:
+        return False, f"No process with name '{process_name}' found."
+
+def terminate_process_tree(pid):
+    try:
+        parent = psutil.Process(pid)
+        children = parent.children(recursive=True)
+        for child in children:
+            child.terminate()
+        _, alive = psutil.wait_procs(children, timeout=5)
+        for p in alive:
+            p.kill()
+        parent.terminate()
+        parent.wait(5)
+        return True, f"Process tree with PID {pid} terminated successfully."
+    except psutil.NoSuchProcess:
+        return False, f"No such process with PID {pid}."
+    except psutil.AccessDenied:
+        return False, "Access denied. Unable to terminate the process."
+    except psutil.TimeoutExpired:
+        return False, f"Timeout expired. Process with PID {pid} could not be terminated in time."
+
 # Example usage:
+success, message = terminate_process_tree_by_name("msedge.exe")
+if success:
+    print(message)
+else:
+    print("Error:", message)
+
+print(list_process())
+
+print(terminate_process_tree(16744))
 
 print(get_system_resource_utilization())
 
