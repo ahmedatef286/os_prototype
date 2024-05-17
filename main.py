@@ -148,3 +148,26 @@ def main(command,pid=None, other_var=None):
 
 
 
+def set_process_priority(pid, priority):
+    priority_classes = {
+        'low': psutil.IDLE_PRIORITY_CLASS,
+        'below_normal': psutil.BELOW_NORMAL_PRIORITY_CLASS,
+        'normal': psutil.NORMAL_PRIORITY_CLASS,
+        'above_normal': psutil.ABOVE_NORMAL_PRIORITY_CLASS,
+        'high': psutil.HIGH_PRIORITY_CLASS,
+        'realtime': psutil.REALTIME_PRIORITY_CLASS
+    }
+
+    if isinstance(priority, str):
+        priority = priority_classes.get(priority.lower())
+
+    try:
+        process = psutil.Process(pid)
+        process.nice(priority)
+        return True, f"Priority set successfully for PID {pid}."
+    except psutil.NoSuchProcess:
+        return False, f"No such process with PID {pid}."
+    except psutil.AccessDenied:
+        return False, "Access denied. Unable to set priority."
+    except ValueError:
+        return False, "Invalid priority value."
