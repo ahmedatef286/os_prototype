@@ -40,6 +40,17 @@ def terminate_process_tree(pid):
 
 
 def set_process_priority(pid, nice_value):
+    priority_classes = {
+        'low': psutil.IDLE_PRIORITY_CLASS,
+        'below_normal': psutil.BELOW_NORMAL_PRIORITY_CLASS,
+        'normal': psutil.NORMAL_PRIORITY_CLASS,
+        'above_normal': psutil.ABOVE_NORMAL_PRIORITY_CLASS,
+        'high': psutil.HIGH_PRIORITY_CLASS,
+        'realtime': psutil.REALTIME_PRIORITY_CLASS
+    }
+
+    if isinstance(nice_value, str):
+        nice_value = priority_classes.get(nice_value.lower())
     try:
         process = psutil.Process(pid)
         process.nice(nice_value)
@@ -100,7 +111,7 @@ def run(command):
         return processes_dict
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--uuid")
     args = parser.parse_args()
@@ -112,6 +123,7 @@ if _name_ == "_main_":
         try:
             result = run(cmd)
         except Exception as e:
-            result = {"exception": e._str_()}
+            result = {"exception": e.__str__()}
         result = json.dumps(result)
         print(stream_start + result + stream_end)
+        
